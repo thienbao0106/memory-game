@@ -2,26 +2,17 @@ import { useEffect, useState } from "react";
 import Card from "./components/Card";
 import { CardItem } from "./types/CardType";
 type MemoryGameProps = {
-  imageUrls: string[];
+  imageUrls: CardItem[];
 };
 
 const MemoryGame = ({ imageUrls }: MemoryGameProps) => {
   const [arrClickedCard, setArrClickedCard] = useState<CardItem[]>([]);
-  const [arrCards, setArrCards] = useState<CardItem[]>(
-    Array.from(imageUrls)
-      .concat(imageUrls)
-      .map((url: string, index: number) => {
-        return {
-          id: index,
-          url,
-          isMatched: false,
-          isFlipped: false,
-        };
-      })
-  );
-
+  const [arrCards, setArrCards] = useState<CardItem[]>(imageUrls);
+  const [score, setScore] = useState(0);
   const checkCard = () => {
     if (arrClickedCard[0].url === arrClickedCard[1].url) {
+      setScore((prev) => prev + 1);
+
       const newArr = arrCards.map((card: CardItem) => {
         if (
           card.id === arrClickedCard[0].id ||
@@ -49,11 +40,10 @@ const MemoryGame = ({ imageUrls }: MemoryGameProps) => {
   };
 
   useEffect(() => {
-    console.log("check");
     if (arrClickedCard.length !== 2) return;
     const func = setTimeout(() => {
       checkCard();
-    }, 1000);
+    }, 400);
     return () => {
       clearTimeout(func);
     };
@@ -69,16 +59,32 @@ const MemoryGame = ({ imageUrls }: MemoryGameProps) => {
     arrCards.splice(indexCard, 1, card);
     const newArr = arrCards;
     setArrCards([...newArr]);
-    // checkCard();
   };
 
   return (
-    <section
-      className={`grid justify-center items-center gap-3 grid-cols-${imageUrls.length}`}
-    >
-      {arrCards.map((item: CardItem, index: number) => (
-        <Card setArrClickedCard={handleOnClick} cardItem={item} key={index} />
-      ))}
+    <section>
+      <section>
+        <p>
+          Score: <strong>{score}</strong>
+        </p>
+        {score === arrCards.length / 2 && (
+          <p>
+            You've already finished the game, you can{" "}
+            <a className="font-bold text-blue-500" href="/">
+              restart again
+            </a>
+          </p>
+        )}
+      </section>
+      <section
+        className={`grid justify-center items-center gap-3 grid-cols-${
+          imageUrls.length / 2
+        }`}
+      >
+        {arrCards.map((item: CardItem, index: number) => (
+          <Card setArrClickedCard={handleOnClick} cardItem={item} key={index} />
+        ))}
+      </section>
     </section>
   );
 };

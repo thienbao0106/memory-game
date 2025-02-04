@@ -16,7 +16,7 @@ const Card = ({ cardItem, setArrClickedCard }: CardProps) => {
     >
       {cardItem.isMatched || cardItem.isFlipped ? (
         <img
-          className="w-100 h-100"
+          className="w-70 h-70"
           src={cardItem.url}
           alt={`img-${cardItem.id}`}
         />
